@@ -1,0 +1,156 @@
+@import "reset.css";
+
+* {
+	-webkit-touch-callout: none; /* prevent callout to copy image, etc when tap to hold */
+	-webkit-text-size-adjust: none; /* prevent webkit from resizing text to fit */
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+	-webkit-user-select: none; /* prevent copy paste, to allow, change 'none' to 'text' */
+} 
+html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+body, html {
+    height: 100%;
+}
+
+
+
+/* Reusable */
+.center {
+	text-align: center;
+}
+
+.centered {
+	margin: 0 auto;
+}
+
+.padded {
+	padding: 12px;
+}
+
+.spaced {
+	margin: 13px auto;
+}
+
+.strong {
+	font-weight: bold;
+}
+
+.block {
+	display: block;
+}
+
+.small {
+	font: normal normal 1em Helvetica, sans-serif;
+}
+
+.welcome {
+	margin: 10px;
+	font-size: 1.2em;
+}
+
+.imgfixed {
+	max-width: 450px;
+	width: 100%;
+	height: auto;
+}
+
+.bigimgfixed {
+	max-width: 700px;
+	width: 100%;
+	height: auto;
+}
+
+.hidden {
+	display: none;
+}
+
+p.description {
+	font: italic normal 1.1em georgia, serif;
+	padding: 5px 10px;
+}
+
+/** Media **/
+.ui-page {
+	background: transparent url("../img/bg_body.jpg?v2") no-repeat center top;
+	background-size: cover;
+}
+#name {
+    bottom: 25%;
+    color: white;
+    font-size: 38px;
+    margin: auto;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+#gamepad {
+    color: black;
+    float: left;
+    height: 100%;
+    width: 100%;
+}
+#play {
+    background: url("../img/push_button.png") no-repeat scroll center center transparent;
+    width: 255px;
+    height: 255px;
+    left: 50%;
+    margin-left: -122px;
+    margin-top: -70px;
+    position: fixed;
+    top: 50%;
+	padding: 0;
+}
+#tigo {
+    width: 130px;
+    height: 130px;
+    left: 50%;
+    margin-left: -65px;
+    position: fixed;
+    top: 48%;
+	padding: 0;
+}
+	
+#up {
+    background: url("../img/arrowUp.png") repeat scroll 0 0 transparent;
+    height: 64px;
+    left: 50%;
+    margin-left: -43px;
+    margin-top: 10px;
+    position: fixed;
+    top: 0;
+    width: 86px;
+}
+#down {
+    background: url("../img/arrowDown.png") repeat scroll 0 0 transparent;
+    bottom: 0;
+    height: 64px;
+    left: 50%;
+    margin-bottom: 10px;
+    margin-left: -43px;
+    margin-top: -64px;
+    position: fixed;
+    width: 86px;
+}
+#left {
+    background: url("../img/arrowLeft.png") repeat scroll 0 0 transparent;
+    height: 86px;
+    left: 0;
+    margin-left: 10px;
+    position: fixed;
+    top: 48%;
+    width: 64px;
+	display: none;
+}
+#right {
+    background: url("../img/arrowRight.png") repeat scroll 0 0 transparent;
+    height: 86px;
+    margin-right: 10px;
+    position: fixed;
+    right: 0;
+    top: 48%;
+    width: 64px;
+	display: none;
+}

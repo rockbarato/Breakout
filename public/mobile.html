@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	
+	<script type="text/javascript">var NREUMQ=NREUMQ||[];NREUMQ.push(["mark","firstbyte",new Date().getTime()]);</script>
+	<title>TigoBreakout</title>
+	
+	<!-- Mobile viewport optimization h5bp.com/ad -->
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0" />
+	
+	<script>if(/(#_=_)/i.test(window.location.hash))window.location.hash="";</script>
+
+	<!--iOS web app, deletable if not needed -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/mobile.css" />
+    <script type="text/javascript" src="js/libs/jquery-1.7.2.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+	
+        $(document).ready(function() {
+			
+			var menuURL = "http://tigobreakout-openmobile.rhcloud.com/game";
+			
+			/**
+			 * Function para parsear los parametros recibidos en la URL
+			 */ 
+			function getUrlVars() {
+				var vars = {};
+				var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+					vars[key] = value;
+				});
+				
+				return vars;
+			}
+			
+			var $_GET = getUrlVars();
+			
+			if (!$_GET.auth_id) {
+				window.location.href = menuURL;
+			}
+			
+			// console.log($_GET.auth_id);
+			
+			// Nos conectamos al socket
+			var baseURL = "http://" + window.location.hostname;
+			var socket = io.connect(baseURL);
+			
+			// Emitted when the socket connected successfully 
+			socket.on('connect', function () {
+				socket.send("Jugador : " + $_GET.auth_id + " ha entrado a la cola");
+			});
+			
+			// Show gamepad when game is ready too
+			socket.on('show_gamepad', function (resp) {
+				
+				if (resp.player_id == $_GET.auth_id) {
+					socket.send("Mostrando controles al jugador: " + resp.player_id);
+					
+					$("#play").fadeOut('slow', function() {
+						$("#left,#right").fadeIn('fast');
+					});
+				}
+				
+			});
+			
+			
+			$(document).bind('keydown keyup', function(e){
+				console.log(e.type);
+				
+				if (e.type == 'keydown') {
+					if (emit == true) {
+						emit = false;
+						
+						socket.emit('control', {
+							'keycode': e.which
+						});
+					}
+				}
+				
+				if (e.type == 'keyup') {
+					if (emit == false) {
+						emit = true;
+						/*
+						socket.emit('control', {
+							'keycode': e.which
+						});
+						*/
+					}
+				}
+			});
+			
+			// When it's not player's turn
+			socket.on('unauthorized', function (resp) {
+				
+				socket.send("Alerta de turno al jugador: " + resp.player_id);
+				
+				if (resp.current_player != $_GET.auth_id) {
+					alert('Debes esperar tu turno en la pantalla!');
+				}
+				
+			});
+			
+			// When it's not player's turn
+			socket.on('gameover_redir', function (resp) {
+				
+				socket.send("Redireccionando al menu al jugador: " + resp.player_id);
+				
+				if (resp.player_id == $_GET.auth_id) {
+					window.location.href = menuURL;
+				}
+				
+			});
+			
+			// Bindeamos la accion para los botones del gamepad
+			$("#play").bind('tap', function(e) {
+				socket.emit('play', { "auth_id": $_GET.auth_id });
+			});
+			
+			$("#left, #right").bind('vmousedown vmouseup', function(e){
+				//console.log(e.type);
+				socket.emit('control', {
+					'action': e.type,
+					'direction': $(this).attr('id'),
+				});
+			});
+			
+			
+			var emit = true;
+			
+			$('body').bind('keydown keyup', function(e){
+				// console.log(e.type);
+				if (e.which == 83 || e.which == 70) {
+					
+					var direction = (e.which == 83) ? 'left' : 'right';
+					
+					if (e.type == 'keydown') {
+						if (emit == true) {
+							emit = false;
+							
+							socket.emit('control', {
+								'action': 'vmousedown',
+								'direction': direction,
+							});
+						}
+					}
+					
+					if (e.type == 'keyup') {
+						if (emit == false) {
+							emit = true;
+							
+							socket.emit('control', {
+								'action': 'vmouseup',
+								'direction': direction,
+							});
+						}
+					}
+				}
+			});
+			
+        });
+    </script>
+</head>
+<body>
+	<div class="center padded">
+		<img class="imgfixed" src="img/game_logo.png" alt="Tigo Breakout" />
+	</div>
+	<!-- END logo -->
+	
+    <div id="gamepad">
+		<div id="tigo">
+			<img class="imgfixed" src="img/tigo_logo.png" alt="Tigo" />
+		</div>
+        <div id="left"></div>
+        <div id="right"></div>
+        <div id="play"></div>
+    </div>
+	<!-- END gamepad -->
+
+</body>
+</html>
